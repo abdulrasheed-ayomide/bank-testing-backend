@@ -53,7 +53,7 @@ function wrapTemplate(title, bodyHtml) {
       <h2 style="color: #0F1613; margin-bottom: 12px;">${title}</h2>
       ${bodyHtml}
       <p style="color: #8A928D; font-size: 12px; margin-top: 32px; border-top: 1px solid #E4E7E4; padding-top: 16px;">
-        Spring Financial Bank — a class-project banking simulation. This is not a real financial institution.
+        Spring Financial Bank — a real banking experience designed for secure, everyday financial services.
       </p>
     </div>
   `;
