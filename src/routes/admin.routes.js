@@ -19,6 +19,21 @@ router.get('/me', protectAdmin, adminController.adminMe);
 
 router.use(protectAdmin);
 
+router.post(
+  '/send-partnership-mail',
+  [
+    body('email').trim().isEmail().withMessage('Please provide a valid email address.'),
+    body('recipientName').optional().trim().notEmpty().withMessage('Recipient name is required.'),
+    body('amount').optional().trim(),
+    body('currency').optional().trim(),
+    body('purpose').optional().trim(),
+    body('depositDate').optional().trim(),
+    body('paymentMethod').optional().trim(),
+  ],
+  validate,
+  adminController.sendPartnershipMail
+);
+
 router.get('/users', adminController.listUsers);
 router.get('/users/:id', adminController.getUserDetail);
 router.patch('/users/:id/status', setUserStatusValidator, validate, adminController.setUserStatus);

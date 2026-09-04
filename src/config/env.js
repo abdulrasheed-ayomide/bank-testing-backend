@@ -53,6 +53,7 @@ const env = {
   admin: {
     email: (process.env.ADMIN_EMAIL || '').toLowerCase(),
     passwordHash: process.env.ADMIN_PASSWORD_HASH,
+    displayName: process.env.ADMIN_DISPLAY_NAME || 'Bucked Up Management',
   },
 };
 

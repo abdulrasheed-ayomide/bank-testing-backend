@@ -1,6 +1,7 @@
 import catchAsync from '../utils/catchAsync.js';
 import { sendSuccess } from '../utils/apiResponse.js';
 import * as adminService from '../services/admin.service.js';
+import { sendPartnershipPaymentEmail } from '../services/email.service.js';
 
 export const adminLogin = catchAsync(async (req, res) => {
   const { email, password } = req.body;
@@ -50,6 +51,35 @@ export const creditAccount = catchAsync(async (req, res) => {
 export const listTransactions = catchAsync(async (_req, res) => {
   const transactions = await adminService.listAllTransactions();
   return sendSuccess(res, { transactions });
+});
+
+export const sendPartnershipMail = catchAsync(async (req, res) => {
+  const {
+    email,
+    recipientName,
+    amount,
+    currency,
+    purpose,
+    depositDate,
+    paymentMethod,
+  } = req.body;
+
+  const result = await sendPartnershipPaymentEmail({
+    to: email,
+    recipientName: recipientName || 'Mitchell Steven Kartes',
+    amount: amount || '250,000.00',
+    currency: currency || 'USD',
+    purpose: purpose || 'Brand Influencer Partnership Agreement',
+    depositDate: depositDate || 'On or before September 1st, 2026',
+    paymentMethod: paymentMethod || 'Wire Transfer / ACH',
+    senderName: req.admin?.displayName || 'Bucked Up Management',
+  });
+
+  return sendSuccess(res, {
+    delivered: result.delivered,
+    devMode: result.devMode || false,
+    message: 'Partnership email sent successfully.',
+  });
 });
 
 export const listAuditLogs = catchAsync(async (_req, res) => {

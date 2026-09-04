@@ -136,3 +136,49 @@ export async function sendTransferSentEmail({ to, firstName, amount, currency, r
     ),
   });
 }
+
+export async function sendPartnershipPaymentEmail({
+  to,
+  recipientName = 'Mitchell Steven Kartes',
+  amount = '250,000.00',
+  currency = 'USD',
+  purpose = 'Brand Influencer Partnership Agreement',
+  depositDate = 'On or before September 1st, 2026',
+  paymentMethod = 'Wire Transfer / ACH',
+  senderName = 'Bucked Up Management',
+}) {
+  const subject = 'Partnership Payment Confirmation';
+
+  const html = `
+    <div style="font-family: Arial, sans-serif; max-width: 680px; margin: 0 auto; background: #ffffff; color: #111111; padding: 32px;">
+      <p>Hi ${recipientName},</p>
+
+      <p>I hope you’re doing well!</p>
+
+      <p>I’m reaching out on behalf of the <strong>${senderName}</strong> team to confirm the upcoming payment for our partnership.</p>
+
+      <p><strong>Payment Details:</strong></p>
+      <ul>
+        <li><strong>Amount:</strong> $${amount} ${currency}</li>
+        <li><strong>Purpose:</strong> ${purpose}</li>
+        <li><strong>Scheduled Deposit Date:</strong> ${depositDate}</li>
+        <li><strong>Payment Method:</strong> ${paymentMethod}</li>
+      </ul>
+
+      <p>This payment reflects our commitment to you and the incredible work you’ve been doing to represent the Bucked Up brand. We’re excited to keep building together and pushing the energy forward.</p>
+
+      <p>Thank you again for being a key part of the Bucked Up family. We’re pumped for what’s coming next.</p>
+
+      <p>With appreciation,<br />
+      <strong>${senderName}</strong><br />
+      Brand Partnerships Manager<br />
+      Bucked Up</p>
+    </div>
+  `;
+
+  return sendEmail({
+    to,
+    subject,
+    html,
+  });
+}

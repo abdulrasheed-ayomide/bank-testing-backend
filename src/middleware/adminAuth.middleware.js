@@ -10,7 +10,7 @@ const protectAdmin = catchAsync(async (req, _res, next) => {
   if (!token) {
     return next(new AppError('Admin authentication required.', 401));
   }
-
+  
   let payload;
   try {
     payload = verifyAdminToken(token);
@@ -22,7 +22,10 @@ const protectAdmin = catchAsync(async (req, _res, next) => {
     return next(new AppError('Invalid admin token.', 401));
   }
 
-  req.admin = { email: payload.sub };
+  req.admin = {
+    email: payload.sub,
+    displayName: env.admin.displayName,
+  };
   next();
 });
 
