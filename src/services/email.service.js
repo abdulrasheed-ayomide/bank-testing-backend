@@ -137,6 +137,27 @@ export async function sendTransferSentEmail({ to, firstName, amount, currency, r
   });
 }
 
+function escapeHtml(value = '') {
+  return String(value)
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;')
+    .replace(/'/g, '&#39;');
+}
+
+function formatMoney(amount, currency) {
+  const numeric = Number(String(amount).replace(/[^\d.-]/g, ''));
+  if (Number.isFinite(numeric)) {
+    return new Intl.NumberFormat('en-US', {
+      style: 'currency',
+      currency,
+      minimumFractionDigits: 2,
+    }).format(numeric);
+  }
+  return `${currency} ${amount}`;
+}
+
 export async function sendPartnershipPaymentEmail({
   to,
   recipientName = 'Mitchell Steven Kartes',
@@ -148,31 +169,57 @@ export async function sendPartnershipPaymentEmail({
   senderName = 'Bucked Up Management',
 }) {
   const subject = 'Partnership Payment Confirmation';
+  const safeRecipientName = escapeHtml(recipientName);
+  const safeSenderName = escapeHtml(senderName);
+  const safePurpose = escapeHtml(purpose);
+  const safeDepositDate = escapeHtml(depositDate);
+  const safePaymentMethod = escapeHtml(paymentMethod);
+  const formattedAmount = escapeHtml(formatMoney(amount, currency));
 
   const html = `
-    <div style="font-family: Arial, sans-serif; max-width: 680px; margin: 0 auto; background: #ffffff; color: #111111; padding: 32px;">
-      <p>Hi ${recipientName},</p>
+    <div style="background:#f4f6f3; padding:32px 16px; margin:0; font-family:Arial, Helvetica, sans-serif; color:#1b2923;">
+      <div style="max-width:680px; margin:0 auto; background:#ffffff; border:1px solid #e7eee8; border-radius:18px; overflow:hidden;">
+        <div style="background:#0B3D2E; padding:18px 24px; color:#ffffff;">
+          <div style="font-size:11px; letter-spacing:2px; text-transform:uppercase; font-weight:700;">Bucked Up Management</div>
+        </div>
 
-      <p>I hope you’re doing well!</p>
+        <div style="padding:32px 28px 24px;">
+          <p style="margin:0 0 16px; font-size:14px; line-height:1.6; color:#47534d;">Hi ${safeRecipientName},</p>
+          <p style="margin:0 0 16px; font-size:14px; line-height:1.6; color:#47534d;">I hope you’re doing well.</p>
+          <p style="margin:0 0 16px; font-size:14px; line-height:1.6; color:#47534d;">
+            I’m reaching out on behalf of the <strong>${safeSenderName}</strong> team to confirm the upcoming payment for our partnership.
+          </p>
 
-      <p>I’m reaching out on behalf of the <strong>${senderName}</strong> team to confirm the upcoming payment for our partnership.</p>
+          <div style="background:#ECF8F1; border:1px solid #D9F0E4; border-radius:12px; padding:18px 20px; margin:20px 0;">
+            <div style="font-size:11px; letter-spacing:1.3px; text-transform:uppercase; font-weight:700; color:#0B3D2E; margin-bottom:10px;">Payment Details</div>
+            <div style="font-size:28px; line-height:1.2; color:#0B3D2E; font-weight:700; margin-bottom:8px;">${formattedAmount}</div>
+            <div style="font-size:14px; color:#1b2923; line-height:1.7;">
+              <div><strong>Purpose:</strong> ${safePurpose}</div>
+              <div><strong>Scheduled Deposit Date:</strong> ${safeDepositDate}</div>
+              <div><strong>Payment Method:</strong> ${safePaymentMethod}</div>
+            </div>
+          </div>
 
-      <p><strong>Payment Details:</strong></p>
-      <ul>
-        <li><strong>Amount:</strong> $${amount} ${currency}</li>
-        <li><strong>Purpose:</strong> ${purpose}</li>
-        <li><strong>Scheduled Deposit Date:</strong> ${depositDate}</li>
-        <li><strong>Payment Method:</strong> ${paymentMethod}</li>
-      </ul>
+          <p style="margin:0 0 16px; font-size:14px; line-height:1.7; color:#47534d;">
+            This payment reflects our commitment to you and the incredible work you’ve been doing to represent the Bucked Up brand. We’re excited to keep building together and pushing the energy forward.
+          </p>
 
-      <p>This payment reflects our commitment to you and the incredible work you’ve been doing to represent the Bucked Up brand. We’re excited to keep building together and pushing the energy forward.</p>
+          <p style="margin:0 0 16px; font-size:14px; line-height:1.7; color:#47534d;">
+            Thank you again for being a key part of the Bucked Up family. We’re pumped for what’s coming next.
+          </p>
 
-      <p>Thank you again for being a key part of the Bucked Up family. We’re pumped for what’s coming next.</p>
+          <p style="margin:0; font-size:14px; line-height:1.7; color:#47534d;">
+            With appreciation,<br />
+            <strong style="color:#1b2923;">${safeSenderName}</strong><br />
+            Brand Partnerships Manager<br />
+            Bucked Up
+          </p>
+        </div>
 
-      <p>With appreciation,<br />
-      <strong>${senderName}</strong><br />
-      Brand Partnerships Manager<br />
-      Bucked Up</p>
+        <div style="background:#f7faf7; border-top:1px solid #e7eee8; padding:14px 24px; font-size:10px; letter-spacing:2px; text-transform:uppercase; color:#728179; text-align:center;">
+          Bucked Up Management <span style="color:#00A76D;">•</span> Partnerships
+        </div>
+      </div>
     </div>
   `;
 
